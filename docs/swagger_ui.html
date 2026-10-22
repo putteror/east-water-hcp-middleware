@@ -1,0 +1,1030 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>East Water - Swagger UI</title>
+  <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.11.0/swagger-ui.css" />
+  <style>
+    html {
+      box-sizing: border-box;
+      overflow: -moz-scrollbars-vertical;
+      overflow-y: scroll;
+    }
+    *, *:before, *:after {
+      box-sizing: inherit;
+    }
+    body {
+      margin: 0;
+      background: #fafafa;
+    }
+    .topbar {
+      display: none !important;
+    }
+    #custom-header {
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      color: white;
+      padding: 14px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 2px solid #0284c7;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+    #custom-header .brand {
+      font-size: 16px;
+      font-weight: 600;
+      color: #38bdf8;
+    }
+  </style>
+</head>
+<body>
+  <div id="custom-header">
+    <div class="brand">💧 EAST WATER • VMS to HikCentral Pro Gateway API (Swagger UI)</div>
+    <div style="font-size: 13px; color: #94a3b8;">Standalone Interactive Documentation</div>
+  </div>
+  <div id="swagger-ui"></div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.11.0/swagger-ui-bundle.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.11.0/swagger-ui-standalone-preset.js"></script>
+  <script>
+    const spec = {
+  "swagger": "2.0",
+  "info": {
+    "description": "Gateway proxy service connecting VMS management software to HikCentral Pro OpenAPI without local database.",
+    "title": "East Water - VMS to HikCentral Integration Gateway API",
+    "termsOfService": "http://swagger.io/terms/",
+    "contact": {
+      "name": "CENT ACCESS Integration Team",
+      "url": "https://centaccess.com"
+    },
+    "license": {
+      "name": "Apache 2.0",
+      "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+    },
+    "version": "1.0"
+  },
+  "host": "localhost:8080",
+  "basePath": "/",
+  "paths": {
+    "/api/people": {
+      "get": {
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "description": "Retrieves list of registered visitors / people from HikCentral Pro with pagination",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "People"
+        ],
+        "summary": "List People",
+        "parameters": [
+          {
+            "type": "integer",
+            "default": 1,
+            "description": "Page number",
+            "name": "page",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "default": 10,
+            "description": "Page size limit",
+            "name": "limit",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "Search by personCode",
+            "name": "personCode",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "Search by personCode alias",
+            "name": "code",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "Search by personName",
+            "name": "personName",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/definitions/common.APIResponse"
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/definitions/schema.PersonBasicInfo"
+                      }
+                    },
+                    "page": {
+                      "$ref": "#/definitions/schema.PaginationData"
+                    }
+                  }
+                }
+              ]
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/common.APIResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/common.APIResponse"
+            }
+          }
+        }
+      },
+      "post": {
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "description": "Registers a new visitor in HikCentral Pro with Base64 face image and access permissions. To grant access, you can provide either `deviceNames` (supports partial match) OR `accessLevelIds` (HikCentral access levels), or both. Returns 409 if personCode exists.",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "People"
+        ],
+        "summary": "Create Person (Strict)",
+        "parameters": [
+          {
+            "type": "boolean",
+            "description": "Enable upsert mode",
+            "name": "upsert",
+            "in": "query"
+          },
+          {
+            "description": "Person Registration JSON Payload",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/schema.CreatePersonRequest"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created",
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/definitions/common.APIResponse"
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/definitions/schema.PersonResponse"
+                    }
+                  }
+                }
+              ]
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/common.APIResponse"
+            }
+          },
+          "409": {
+            "description": "Conflict - Already exists",
+            "schema": {
+              "$ref": "#/definitions/common.APIResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/common.APIResponse"
+            }
+          }
+        }
+      },
+      "delete": {
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "description": "Deletes one or more persons from HikCentral Pro using a list of personCodes",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "People"
+        ],
+        "summary": "Batch Delete People",
+        "parameters": [
+          {
+            "description": "List of personCodes to delete",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/schema.DeletePeopleRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/definitions/common.APIResponse"
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/definitions/schema.PersonDeleteResponse"
+                    }
+                  }
+                }
+              ]
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/common.APIResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/common.APIResponse"
+            }
+          }
+        }
+      }
+    },
+    "/api/people/upsert": {
+      "put": {
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "description": "Creates a new visitor if not exists, or updates the existing visitor if personCode already exists. To grant access, you can provide either `deviceNames` OR `accessLevelIds`, or both.",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "People"
+        ],
+        "summary": "Upsert Person",
+        "parameters": [
+          {
+            "description": "Person Upsert JSON Payload",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/schema.CreatePersonRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Updated",
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/definitions/common.APIResponse"
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/definitions/schema.PersonResponse"
+                    }
+                  }
+                }
+              ]
+            }
+          },
+          "201": {
+            "description": "Created",
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/definitions/common.APIResponse"
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/definitions/schema.PersonResponse"
+                    }
+                  }
+                }
+              ]
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/common.APIResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/common.APIResponse"
+            }
+          }
+        }
+      },
+      "post": {
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "description": "Creates a new visitor if not exists, or updates the existing visitor if personCode already exists. To grant access, you can provide either `deviceNames` OR `accessLevelIds`, or both.",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "People"
+        ],
+        "summary": "Upsert Person",
+        "parameters": [
+          {
+            "description": "Person Upsert JSON Payload",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/schema.CreatePersonRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Updated",
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/definitions/common.APIResponse"
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/definitions/schema.PersonResponse"
+                    }
+                  }
+                }
+              ]
+            }
+          },
+          "201": {
+            "description": "Created",
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/definitions/common.APIResponse"
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/definitions/schema.PersonResponse"
+                    }
+                  }
+                }
+              ]
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/common.APIResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/common.APIResponse"
+            }
+          }
+        }
+      }
+    },
+    "/api/people/{personCode}": {
+      "get": {
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "description": "Retrieves full details of a single person by personCode including face image Base64 and vehicles",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "People"
+        ],
+        "summary": "Get Person by Code",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "Person Code",
+            "name": "personCode",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/definitions/common.APIResponse"
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/definitions/schema.PersonResponse"
+                    }
+                  }
+                }
+              ]
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/common.APIResponse"
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/common.APIResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/common.APIResponse"
+            }
+          }
+        }
+      },
+      "put": {
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "description": "Updates an existing visitor in HikCentral Pro using JSON payload with optional Base64 faceImage and access permissions (specify either `deviceNames` OR `accessLevelIds`). Returns 404 if not found.",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "People"
+        ],
+        "summary": "Update Person (Strict)",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "Person Code to update",
+            "name": "personCode",
+            "in": "path",
+            "required": true
+          },
+          {
+            "description": "Person Update JSON Payload",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/schema.UpdatePersonRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Updated",
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/definitions/common.APIResponse"
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/definitions/schema.PersonResponse"
+                    }
+                  }
+                }
+              ]
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/common.APIResponse"
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/common.APIResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/common.APIResponse"
+            }
+          }
+        }
+      },
+      "delete": {
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "description": "Deletes a single person from HikCentral Pro by URL personCode",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "People"
+        ],
+        "summary": "Delete Person by Code",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "Person Code to delete",
+            "name": "personCode",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/definitions/common.APIResponse"
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/definitions/schema.PersonDeleteResponse"
+                    }
+                  }
+                }
+              ]
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/common.APIResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/common.APIResponse"
+            }
+          }
+        }
+      }
+    },
+    "/health": {
+      "get": {
+        "description": "Checks service health and outbound 3rd-party connectivity",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "System"
+        ],
+        "summary": "Health Check",
+        "responses": {
+          "200": {
+            "description": "Service Healthy",
+            "schema": {
+              "$ref": "#/definitions/common.APIResponse"
+            }
+          }
+        }
+      }
+    },
+    "/ping": {
+      "get": {
+        "description": "Simple liveness ping endpoint",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "System"
+        ],
+        "summary": "Ping",
+        "responses": {
+          "200": {
+            "description": "pong",
+            "schema": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "common.APIResponse": {
+      "type": "object",
+      "properties": {
+        "data": {},
+        "message": {
+          "type": "string"
+        },
+        "page": {},
+        "success": {
+          "type": "boolean"
+        }
+      }
+    },
+    "schema.CreatePersonRequest": {
+      "type": "object",
+      "required": [
+        "personCode",
+        "personName"
+      ],
+      "properties": {
+        "accessLevelIds": {
+          "description": "AccessLevelIDs: HikCentral Access Level IDs (Specify either accessLevelIds OR deviceNames). Accepts array of strings or numbers (e.g. [\"1\", \"2\"] or [1, 2])",
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "example": [
+            "1",
+            "2"
+          ]
+        },
+        "deviceNames": {
+          "description": "DeviceNames: Doors/devices to grant access (Specify either deviceNames OR accessLevelIds). Supports partial match (e.g. \"Main Entrance\")",
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "example": [
+            "Main Entrance",
+            "Building A"
+          ]
+        },
+        "endDateTime": {
+          "type": "string",
+          "example": "2026-12-31T23:59:59Z"
+        },
+        "faceImage": {
+          "description": "Base64 JPEG/PNG string",
+          "type": "string",
+          "example": "/9j/4AAQSkZJRgABAQEASABIAAD/2wBDAP...mockBase64..."
+        },
+        "licensePlateTexts": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "example": [
+            "1กก1234",
+            "2ขข5678"
+          ]
+        },
+        "personCode": {
+          "type": "string",
+          "example": "P001"
+        },
+        "personName": {
+          "type": "string",
+          "example": "Somchai Jaidee"
+        },
+        "startDateTime": {
+          "type": "string",
+          "example": "2026-01-01T00:00:00Z"
+        }
+      }
+    },
+    "schema.DeletePeopleRequest": {
+      "type": "object",
+      "required": [
+        "personCodes"
+      ],
+      "properties": {
+        "personCodes": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string"
+          },
+          "example": [
+            "P001",
+            "P002"
+          ]
+        }
+      }
+    },
+    "schema.PaginationData": {
+      "type": "object",
+      "properties": {
+        "current_page": {
+          "type": "integer"
+        },
+        "limit": {
+          "type": "integer"
+        },
+        "total_pages": {
+          "type": "integer"
+        },
+        "total_rows": {
+          "type": "integer"
+        }
+      }
+    },
+    "schema.PersonBasicInfo": {
+      "type": "object",
+      "properties": {
+        "accessLevelIds": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "example": [
+            "1",
+            "2"
+          ]
+        },
+        "deviceNames": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "example": [
+            "Main Entrance Door 1"
+          ]
+        },
+        "endDateTime": {
+          "type": "string",
+          "example": "2026-12-31T23:59:59Z"
+        },
+        "hasFaceImage": {
+          "type": "boolean",
+          "example": true
+        },
+        "licensePlateTexts": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "example": [
+            "1กก1234"
+          ]
+        },
+        "personCode": {
+          "type": "string",
+          "example": "P001"
+        },
+        "personName": {
+          "type": "string",
+          "example": "Somchai Jaidee"
+        },
+        "startDateTime": {
+          "type": "string",
+          "example": "2026-01-01T00:00:00Z"
+        },
+        "status": {
+          "type": "string",
+          "example": "ACTIVE"
+        }
+      }
+    },
+    "schema.PersonDeleteResponse": {
+      "type": "object",
+      "properties": {
+        "deletedCodes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "deletedCount": {
+          "type": "integer"
+        },
+        "failedCodes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "totalRequested": {
+          "type": "integer"
+        }
+      }
+    },
+    "schema.PersonResponse": {
+      "type": "object",
+      "properties": {
+        "accessLevelIds": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "example": [
+            "1",
+            "2"
+          ]
+        },
+        "action": {
+          "description": "\"created\" or \"updated\"",
+          "type": "string",
+          "example": "created"
+        },
+        "deviceNames": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "example": [
+            "Main Entrance Door 1",
+            "Building A Turnstile"
+          ]
+        },
+        "endDateTime": {
+          "type": "string",
+          "example": "2026-12-31T23:59:59Z"
+        },
+        "faceImage": {
+          "description": "Single Base64 JPEG string",
+          "type": "string",
+          "example": "/9j/4AAQSkZJRgABAQEASABIAAD/2wBDAP...mockBase64..."
+        },
+        "hasFaceImage": {
+          "type": "boolean",
+          "example": true
+        },
+        "licensePlateTexts": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "example": [
+            "1กก1234"
+          ]
+        },
+        "personCode": {
+          "type": "string",
+          "example": "P001"
+        },
+        "personName": {
+          "type": "string",
+          "example": "Somchai Jaidee"
+        },
+        "processedAt": {
+          "type": "string"
+        },
+        "startDateTime": {
+          "type": "string",
+          "example": "2026-01-01T00:00:00Z"
+        },
+        "status": {
+          "type": "string",
+          "example": "ACTIVE"
+        }
+      }
+    },
+    "schema.UpdatePersonRequest": {
+      "type": "object",
+      "properties": {
+        "accessLevelIds": {
+          "description": "AccessLevelIDs: HikCentral Access Level IDs (Specify either accessLevelIds OR deviceNames). Accepts array of strings or numbers (e.g. [\"1\", \"2\"] or [1, 2])",
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "example": [
+            "1",
+            "2"
+          ]
+        },
+        "deviceNames": {
+          "description": "DeviceNames: Doors/devices to grant access (Specify either deviceNames OR accessLevelIds). Supports partial match (e.g. \"Main Entrance\")",
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "example": [
+            "Main Entrance",
+            "Building A"
+          ]
+        },
+        "endDateTime": {
+          "type": "string",
+          "example": "2026-12-31T23:59:59Z"
+        },
+        "faceImage": {
+          "description": "Updated Base64 JPEG/PNG string",
+          "type": "string",
+          "example": "/9j/4AAQSkZJRgABAQEASABIAAD/2wBDAP...mockBase64..."
+        },
+        "licensePlateTexts": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "example": [
+            "9กก9999"
+          ]
+        },
+        "personName": {
+          "type": "string",
+          "example": "Somchai Updated"
+        },
+        "startDateTime": {
+          "type": "string",
+          "example": "2026-01-01T00:00:00Z"
+        }
+      }
+    }
+  },
+  "securityDefinitions": {
+    "ApiKeyAuth": {
+      "type": "apiKey",
+      "name": "x-api-key",
+      "in": "header"
+    }
+  }
+};
+
+    window.onload = function() {
+      SwaggerUIBundle({
+        spec: spec,
+        dom_id: "#swagger-ui",
+        deepLinking: true,
+        presets: [
+          SwaggerUIBundle.presets.apis,
+          SwaggerUIStandalonePreset
+        ],
+        layout: "BaseLayout"
+      });
+    };
+  </script>
+</body>
+</html>

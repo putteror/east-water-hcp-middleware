@@ -1,0 +1,52 @@
+# Binaries and build outputs
+bin/
+dist/
+/server
+/app
+/main
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+
+# Environment variables & secrets
+.env
+.env.*
+!.env.example
+
+# macOS metadata
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+
+# Windows metadata
+Thumbs.db
+ehthumbs.db
+
+# IDEs & Code Editors
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+*.sublime-project
+*.sublime-workspace
+
+# Test coverage & profiling
+coverage.txt
+coverage.out
+profile.out
+*.prof
+
+# Temporary & Log files
+*.log
+tmp/
+temp/
+
+# Large documents & PDFs
+*.pdf

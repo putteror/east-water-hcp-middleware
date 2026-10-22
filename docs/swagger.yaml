@@ -1,0 +1,632 @@
+basePath: /
+definitions:
+  common.APIResponse:
+    properties:
+      data: {}
+      message:
+        type: string
+      page: {}
+      success:
+        type: boolean
+    type: object
+  schema.CreatePersonRequest:
+    properties:
+      accessLevelIds:
+        description: 'AccessLevelIDs: HikCentral Access Level IDs (Specify either
+          accessLevelIds OR deviceNames). Accepts array of strings or numbers (e.g.
+          ["1", "2"] or [1, 2])'
+        example:
+        - "1"
+        - "2"
+        items:
+          type: string
+        type: array
+      deviceNames:
+        description: 'DeviceNames: Doors/devices to grant access (Specify either deviceNames
+          OR accessLevelIds). Supports partial match (e.g. "Main Entrance")'
+        example:
+        - Main Entrance
+        - Building A
+        items:
+          type: string
+        type: array
+      endDateTime:
+        example: "2026-12-31T23:59:59Z"
+        type: string
+      faceImage:
+        description: Base64 JPEG/PNG string
+        example: /9j/4AAQSkZJRgABAQEASABIAAD/2wBDAP...mockBase64...
+        type: string
+      licensePlateTexts:
+        example:
+        - 1กก1234
+        - 2ขข5678
+        items:
+          type: string
+        type: array
+      personCode:
+        example: P001
+        type: string
+      personName:
+        example: Somchai Jaidee
+        type: string
+      startDateTime:
+        example: "2026-01-01T00:00:00Z"
+        type: string
+    required:
+    - personCode
+    - personName
+    type: object
+  schema.DeletePeopleRequest:
+    properties:
+      personCodes:
+        example:
+        - P001
+        - P002
+        items:
+          type: string
+        minItems: 1
+        type: array
+    required:
+    - personCodes
+    type: object
+  schema.PaginationData:
+    properties:
+      current_page:
+        type: integer
+      limit:
+        type: integer
+      total_pages:
+        type: integer
+      total_rows:
+        type: integer
+    type: object
+  schema.PersonBasicInfo:
+    properties:
+      accessLevelIds:
+        example:
+        - "1"
+        - "2"
+        items:
+          type: string
+        type: array
+      deviceNames:
+        example:
+        - Main Entrance Door 1
+        items:
+          type: string
+        type: array
+      endDateTime:
+        example: "2026-12-31T23:59:59Z"
+        type: string
+      hasFaceImage:
+        example: true
+        type: boolean
+      licensePlateTexts:
+        example:
+        - 1กก1234
+        items:
+          type: string
+        type: array
+      personCode:
+        example: P001
+        type: string
+      personName:
+        example: Somchai Jaidee
+        type: string
+      startDateTime:
+        example: "2026-01-01T00:00:00Z"
+        type: string
+      status:
+        example: ACTIVE
+        type: string
+    type: object
+  schema.PersonDeleteResponse:
+    properties:
+      deletedCodes:
+        items:
+          type: string
+        type: array
+      deletedCount:
+        type: integer
+      failedCodes:
+        items:
+          type: string
+        type: array
+      totalRequested:
+        type: integer
+    type: object
+  schema.PersonResponse:
+    properties:
+      accessLevelIds:
+        example:
+        - "1"
+        - "2"
+        items:
+          type: string
+        type: array
+      action:
+        description: '"created" or "updated"'
+        example: created
+        type: string
+      deviceNames:
+        example:
+        - Main Entrance Door 1
+        - Building A Turnstile
+        items:
+          type: string
+        type: array
+      endDateTime:
+        example: "2026-12-31T23:59:59Z"
+        type: string
+      faceImage:
+        description: Single Base64 JPEG string
+        example: /9j/4AAQSkZJRgABAQEASABIAAD/2wBDAP...mockBase64...
+        type: string
+      hasFaceImage:
+        example: true
+        type: boolean
+      licensePlateTexts:
+        example:
+        - 1กก1234
+        items:
+          type: string
+        type: array
+      personCode:
+        example: P001
+        type: string
+      personName:
+        example: Somchai Jaidee
+        type: string
+      processedAt:
+        type: string
+      startDateTime:
+        example: "2026-01-01T00:00:00Z"
+        type: string
+      status:
+        example: ACTIVE
+        type: string
+    type: object
+  schema.UpdatePersonRequest:
+    properties:
+      accessLevelIds:
+        description: 'AccessLevelIDs: HikCentral Access Level IDs (Specify either
+          accessLevelIds OR deviceNames). Accepts array of strings or numbers (e.g.
+          ["1", "2"] or [1, 2])'
+        example:
+        - "1"
+        - "2"
+        items:
+          type: string
+        type: array
+      deviceNames:
+        description: 'DeviceNames: Doors/devices to grant access (Specify either deviceNames
+          OR accessLevelIds). Supports partial match (e.g. "Main Entrance")'
+        example:
+        - Main Entrance
+        - Building A
+        items:
+          type: string
+        type: array
+      endDateTime:
+        example: "2026-12-31T23:59:59Z"
+        type: string
+      faceImage:
+        description: Updated Base64 JPEG/PNG string
+        example: /9j/4AAQSkZJRgABAQEASABIAAD/2wBDAP...mockBase64...
+        type: string
+      licensePlateTexts:
+        example:
+        - 9กก9999
+        items:
+          type: string
+        type: array
+      personName:
+        example: Somchai Updated
+        type: string
+      startDateTime:
+        example: "2026-01-01T00:00:00Z"
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact:
+    name: CENT ACCESS Integration Team
+    url: https://centaccess.com
+  description: Gateway proxy service connecting VMS management software to HikCentral
+    Pro OpenAPI without local database.
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: East Water - VMS to HikCentral Integration Gateway API
+  version: "1.0"
+paths:
+  /api/people:
+    delete:
+      consumes:
+      - application/json
+      description: Deletes one or more persons from HikCentral Pro using a list of
+        personCodes
+      parameters:
+      - description: List of personCodes to delete
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/schema.DeletePeopleRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            allOf:
+            - $ref: '#/definitions/common.APIResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/schema.PersonDeleteResponse'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.APIResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/common.APIResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Batch Delete People
+      tags:
+      - People
+    get:
+      description: Retrieves list of registered visitors / people from HikCentral
+        Pro with pagination
+      parameters:
+      - default: 1
+        description: Page number
+        in: query
+        name: page
+        type: integer
+      - default: 10
+        description: Page size limit
+        in: query
+        name: limit
+        type: integer
+      - description: Search by personCode
+        in: query
+        name: personCode
+        type: string
+      - description: Search by personCode alias
+        in: query
+        name: code
+        type: string
+      - description: Search by personName
+        in: query
+        name: personName
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            allOf:
+            - $ref: '#/definitions/common.APIResponse'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/schema.PersonBasicInfo'
+                  type: array
+                page:
+                  $ref: '#/definitions/schema.PaginationData'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.APIResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/common.APIResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: List People
+      tags:
+      - People
+    post:
+      consumes:
+      - application/json
+      description: Registers a new visitor in HikCentral Pro with Base64 face image
+        and access permissions. To grant access, you can provide either `deviceNames`
+        (supports partial match) OR `accessLevelIds` (HikCentral access levels), or
+        both. Returns 409 if personCode exists.
+      parameters:
+      - description: Enable upsert mode
+        in: query
+        name: upsert
+        type: boolean
+      - description: Person Registration JSON Payload
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/schema.CreatePersonRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            allOf:
+            - $ref: '#/definitions/common.APIResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/schema.PersonResponse'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.APIResponse'
+        "409":
+          description: Conflict - Already exists
+          schema:
+            $ref: '#/definitions/common.APIResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/common.APIResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Create Person (Strict)
+      tags:
+      - People
+  /api/people/{personCode}:
+    delete:
+      description: Deletes a single person from HikCentral Pro by URL personCode
+      parameters:
+      - description: Person Code to delete
+        in: path
+        name: personCode
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            allOf:
+            - $ref: '#/definitions/common.APIResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/schema.PersonDeleteResponse'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.APIResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/common.APIResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Delete Person by Code
+      tags:
+      - People
+    get:
+      description: Retrieves full details of a single person by personCode including
+        face image Base64 and vehicles
+      parameters:
+      - description: Person Code
+        in: path
+        name: personCode
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            allOf:
+            - $ref: '#/definitions/common.APIResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/schema.PersonResponse'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.APIResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/common.APIResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/common.APIResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Get Person by Code
+      tags:
+      - People
+    put:
+      consumes:
+      - application/json
+      description: Updates an existing visitor in HikCentral Pro using JSON payload
+        with optional Base64 faceImage and access permissions (specify either `deviceNames`
+        OR `accessLevelIds`). Returns 404 if not found.
+      parameters:
+      - description: Person Code to update
+        in: path
+        name: personCode
+        required: true
+        type: string
+      - description: Person Update JSON Payload
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/schema.UpdatePersonRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Updated
+          schema:
+            allOf:
+            - $ref: '#/definitions/common.APIResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/schema.PersonResponse'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.APIResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/common.APIResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/common.APIResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Update Person (Strict)
+      tags:
+      - People
+  /api/people/upsert:
+    post:
+      consumes:
+      - application/json
+      description: Creates a new visitor if not exists, or updates the existing visitor
+        if personCode already exists. To grant access, you can provide either `deviceNames`
+        OR `accessLevelIds`, or both.
+      parameters:
+      - description: Person Upsert JSON Payload
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/schema.CreatePersonRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Updated
+          schema:
+            allOf:
+            - $ref: '#/definitions/common.APIResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/schema.PersonResponse'
+              type: object
+        "201":
+          description: Created
+          schema:
+            allOf:
+            - $ref: '#/definitions/common.APIResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/schema.PersonResponse'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.APIResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/common.APIResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Upsert Person
+      tags:
+      - People
+    put:
+      consumes:
+      - application/json
+      description: Creates a new visitor if not exists, or updates the existing visitor
+        if personCode already exists. To grant access, you can provide either `deviceNames`
+        OR `accessLevelIds`, or both.
+      parameters:
+      - description: Person Upsert JSON Payload
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/schema.CreatePersonRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Updated
+          schema:
+            allOf:
+            - $ref: '#/definitions/common.APIResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/schema.PersonResponse'
+              type: object
+        "201":
+          description: Created
+          schema:
+            allOf:
+            - $ref: '#/definitions/common.APIResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/schema.PersonResponse'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.APIResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/common.APIResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Upsert Person
+      tags:
+      - People
+  /health:
+    get:
+      description: Checks service health and outbound 3rd-party connectivity
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Service Healthy
+          schema:
+            $ref: '#/definitions/common.APIResponse'
+      summary: Health Check
+      tags:
+      - System
+  /ping:
+    get:
+      description: Simple liveness ping endpoint
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: pong
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Ping
+      tags:
+      - System
+securityDefinitions:
+  ApiKeyAuth:
+    in: header
+    name: x-api-key
+    type: apiKey
+swagger: "2.0"
